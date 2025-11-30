@@ -41,6 +41,10 @@
         .tab-btn.active{background:rgba(55,65,81,.9);color:#f9fafb}
         .panel{width:100%;max-width:360px;margin-top:8px;padding:10px;border-radius:16px;background:rgba(15,23,42,.96);font-size:13px}
         .panel.hidden{display:none}
+        .panel-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+        .back-btn{width:28px;height:28px;border-radius:999px;border:none;background:rgba(31,41,55,0.95);color:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+        .panel-title{font-weight:600;font-size:14px}
+        .panel-subtitle{font-size:11px;opacity:0.7;margin-top:2px}
         .upgrade-item,.quest-item,.farm-item,.ach-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(55,65,81,.7)}
         .upgrade-item:last-child,.quest-item:last-child,.farm-item:last-child,.ach-item:last-child{border-bottom:none}
         .upgrade-main,.quest-main,.farm-main,.ach-main{display:flex;flex-direction:column;gap:2px}
@@ -70,7 +74,8 @@
     </div>
 
     <div class="content">
-        <div class="hamster-zone">
+        <!-- Главная зона с хомяком (видна только на вкладке Улучшения) -->
+        <div class="hamster-zone" id="hamster-zone">
             <div class="hamster-wrapper" id="hamster-wrapper">
                 <div class="hamster">🐹</div>
                 <div class="ring"></div>
@@ -94,6 +99,7 @@
             <button class="click-btn" id="click-btn">Кликнуть 🐹</button>
         </div>
 
+        <!-- Нижнее меню -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="upgrades">
                 <span class="icon">⬆️</span>
@@ -117,8 +123,13 @@
             </button>
         </div>
 
+        <!-- Страницы -->
         <!-- Улучшения -->
         <div class="panel" id="panel-upgrades">
+            <div class="panel-header">
+                <div class="panel-title">Улучшения</div>
+            </div>
+
             <div class="upgrade-item">
                 <div class="upgrade-main">
                     <div class="upgrade-title">Энергия</div>
@@ -158,21 +169,49 @@
 
         <!-- Ферма -->
         <div class="panel hidden" id="panel-farm">
+            <div class="panel-header">
+                <button class="back-btn" data-back="upgrades">←</button>
+                <div>
+                    <div class="panel-title">Ферма</div>
+                    <div class="panel-subtitle">Покупай структуры для пассивного дохода</div>
+                </div>
+            </div>
             <div id="farm-list"></div>
         </div>
 
         <!-- Приглашения -->
         <div class="panel hidden" id="panel-invites">
+            <div class="panel-header">
+                <button class="back-btn" data-back="upgrades">←</button>
+                <div>
+                    <div class="panel-title">Приглашения</div>
+                    <div class="panel-subtitle">Рефералы и бонусы за друзей</div>
+                </div>
+            </div>
             Приглашай друзей в бота и делись своим реферальным кодом. В будущем здесь можно сделать реальные бонусы 👥
         </div>
 
         <!-- Достижения -->
         <div class="panel hidden" id="panel-achievements">
+            <div class="panel-header">
+                <button class="back-btn" data-back="upgrades">←</button>
+                <div>
+                    <div class="panel-title">Достижения</div>
+                    <div class="panel-subtitle">Собери все награды хомяка</div>
+                </div>
+            </div>
             <div id="ach-list"></div>
         </div>
 
         <!-- Задания -->
         <div class="panel hidden" id="panel-quests">
+            <div class="panel-header">
+                <button class="back-btn" data-back="upgrades">←</button>
+                <div>
+                    <div class="panel-title">Задания</div>
+                    <div class="panel-subtitle">Выполняй квесты и забирай награды</div>
+                </div>
+            </div>
             <div id="quest-list"></div>
         </div>
     </div>
@@ -198,6 +237,7 @@
     const energyLabel = document.getElementById("energy-label");
     const energyFill = document.getElementById("energy-fill");
     const hamsterWrapper = document.getElementById("hamster-wrapper");
+    const hamsterZone = document.getElementById("hamster-zone");
 
     const energyMeta = document.getElementById("energy-meta");
     const clickMeta = document.getElementById("click-meta");
@@ -222,6 +262,8 @@
         quests: document.getElementById("panel-quests")
     };
 
+    const backButtons = document.querySelectorAll(".back-btn");
+
     let userId = "guest";
     if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const u = tg.initDataUnsafe.user;
@@ -231,7 +273,6 @@
 
     const STORAGE_KEY = "hamster_state_" + userId;
 
-    // ----- ФЕРМЫ -----
     const FARM_DEFS = [
         {id:"cage",   title:"Клетка",         desc:"+2 в секунду за уровень",   baseIncome:2,   baseCost:200},
         {id:"office", title:"Хомяк-офис",     desc:"+5 в секунду за уровень",   baseIncome:5,   baseCost:800},
@@ -240,14 +281,12 @@
         {id:"orbita", title:"Орбит. станция", desc:"+80 в секунду за уровень",  baseIncome:80,  baseCost:20000},
     ];
 
-    // ----- ЗАДАНИЯ -----
     const QUEST_DEFS = [
         {id:"clicks50",  title:"Сделай 50 кликов",    desc:"Нажимай по хомяку",          reward:200,  target:50,  type:"clicks"},
         {id:"coins1000", title:"Накопи 1000 монет",   desc:"Достигни баланса 1000",     reward:500,  target:1000,type:"coins"},
         {id:"passive20", title:"20 монет/секунду",    desc:"Разгони пассивный доход",   reward:800,  target:20,  type:"auto"},
     ];
 
-    // ----- ДОСТИЖЕНИЯ -----
     const ACH_DEFS = [
         {id:"firstClick", title:"Первый шаг",  desc:"Сделай первый клик",           target:1,   type:"clicks"},
         {id:"clicks500",  title:"Кликер",      desc:"Сделай 500 кликов",            target:500, type:"clicks"},
@@ -268,7 +307,7 @@
         autoLevel: 1,
 
         regenLevel: 1,
-        energyRegenRate: 1.0, // ⚡/сек
+        energyRegenRate: 1.0,
 
         lastEnergyAt: Date.now(),
         lastIncomeAt: Date.now(),
@@ -304,13 +343,11 @@
 
     function formatNumber(n){return n.toLocaleString("ru-RU")}
 
-    // ----- Стоимости апгрейдов -----
     function getClickUpgradeCost(){return Math.round(50*Math.pow(1.5,state.clickLevel-1));}
     function getEnergyUpgradeCost(){return Math.round(75*Math.pow(1.5,state.energyLevel-1));}
     function getAutoUpgradeCost(){return Math.round(100*Math.pow(1.6,state.autoLevel-1));}
     function getRegenUpgradeCost(){return Math.round(120*Math.pow(1.6,state.regenLevel-1));}
 
-    // ----- Фермы -----
     function getFarmState(id){
         const f = state.farms.find(x=>x.id===id);
         if (!f){const nf={id,level:0};state.farms.push(nf);return nf;}
@@ -328,12 +365,10 @@
         }
         return sum;
     }
-
     function getAutoIncome(){
         return state.autoLevel + getFarmIncome();
     }
 
-    // ----- Реген энергии и авто-доход -----
     function regenEnergy(now){
         const deltaSec = (now - state.lastEnergyAt)/1000;
         if(deltaSec<=0)return;
@@ -362,16 +397,14 @@
         else{btn.classList.add("disabled");}
     }
 
-    // ----- Достижения -----
+    // Достижения
     function getAchProgress(ach){
         if(ach.type==="clicks") return Math.min(state.clickCount, ach.target);
         if(ach.type==="earned") return Math.min(state.totalEarned, ach.target);
         if(ach.type==="auto")   return Math.min(getAutoIncome(), ach.target);
         return 0;
     }
-    function isAchCompleted(ach){
-        return getAchProgress(ach) >= ach.target;
-    }
+    function isAchCompleted(ach){return getAchProgress(ach) >= ach.target;}
 
     function renderAchievements(){
         achList.innerHTML = "";
@@ -399,12 +432,8 @@
             const badge = document.createElement("div");
             badge.className = "ach-badge";
             const completed = isAchCompleted(ach);
-            if(completed){
-                badge.classList.add("done");
-                badge.textContent = "Открыто";
-            }else{
-                badge.textContent = "Не выполнено";
-            }
+            if(completed){badge.classList.add("done");badge.textContent="Открыто";}
+            else{badge.textContent="Не выполнено";}
 
             const progressBar = document.createElement("div");
             progressBar.className = "progress";
@@ -428,16 +457,14 @@
         }
     }
 
-    // ----- Квесты -----
+    // Квесты
     function getQuestProgress(q){
         if(q.type==="clicks") return Math.min(state.clickCount, q.target);
         if(q.type==="coins")  return Math.min(state.coins, q.target);
         if(q.type==="auto")   return Math.min(getAutoIncome(), q.target);
         return 0;
     }
-    function isQuestCompleted(q){
-        return getQuestProgress(q) >= q.target;
-    }
+    function isQuestCompleted(q){return getQuestProgress(q) >= q.target;}
 
     function renderQuestPanel(){
         questList.innerHTML = "";
@@ -505,7 +532,7 @@
         }
     }
 
-    // ----- Фермы -----
+    // Фермы
     function renderFarmPanel(){
         farmList.innerHTML = "";
         for(const def of FARM_DEFS){
@@ -552,7 +579,7 @@
         }
     }
 
-    // ----- UI обновление -----
+    // UI
     function updateUI(){
         const autoIncome = getAutoIncome();
 
@@ -591,15 +618,14 @@
         renderAchievements();
     }
 
-    // ----- Анимация клика -----
+    // Анимация клика
     function spawnFloatText(amount){
         const el = document.createElement("div");
         el.className = "float-coin";
         el.textContent = `+${amount}`;
 
-        const rect = hamsterWrapper.getBoundingClientRect();
-        const x = Math.random()*0.6 + 0.2; // 0.2–0.8
-        const y = Math.random()*0.4 + 0.3; // 0.3–0.7
+        const x = Math.random()*0.6 + 0.2;
+        const y = Math.random()*0.4 + 0.3;
         el.style.left = (x*100)+"%";
         el.style.top  = (y*100)+"%";
         el.style.transform = "translate(-50%, -50%)";
@@ -613,7 +639,7 @@
         setTimeout(()=>hamsterWrapper.classList.remove("hit"),100);
     }
 
-    // ----- Обработчики -----
+    // Клик
     clickBtn.addEventListener("click", ()=>{
         const now = Date.now();
         regenEnergy(now);
@@ -636,6 +662,7 @@
         saveState();
     });
 
+    // Апгрейды
     btnUpgEnergy.addEventListener("click", ()=>{
         const cost = getEnergyUpgradeCost();
         if(state.coins<cost)return;
@@ -671,19 +698,34 @@
         if(state.coins<cost)return;
         state.coins -= cost;
         state.regenLevel += 1;
-        state.energyRegenRate += 0.25; // +0.25 ⚡/сек за уровень
+        state.energyRegenRate += 0.25;
         updateUI();
         saveState();
     });
 
+    // Переключение вкладок как страниц
+    function switchTab(tab){
+        tabButtons.forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
+        Object.keys(panels).forEach(k=>{
+            panels[k].classList.toggle("hidden",k!==tab);
+        });
+        if (tab === "upgrades"){
+            hamsterZone.style.display = "flex";
+        } else {
+            hamsterZone.style.display = "none";
+        }
+    }
+
     tabButtons.forEach(btn=>{
         btn.addEventListener("click",()=>{
-            tabButtons.forEach(b=>b.classList.remove("active"));
-            btn.classList.add("active");
-            const tab = btn.dataset.tab;
-            Object.keys(panels).forEach(k=>{
-                panels[k].classList.toggle("hidden",k!==tab);
-            });
+            switchTab(btn.dataset.tab);
+        });
+    });
+
+    backButtons.forEach(btn=>{
+        btn.addEventListener("click",()=>{
+            const target = btn.dataset.back || "upgrades";
+            switchTab(target);
         });
     });
 
