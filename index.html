@@ -2,8 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>HamsterVerse Mini App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HamsterSteam Mini App</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -12,17 +13,21 @@
         body{background:radial-gradient(circle at top,#1c67ff,#020617 60%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
         .app{width:100%;max-width:430px;height:100vh;max-height:820px;background:rgba(15,23,42,.98);border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.6);padding:16px 16px 10px;display:flex;flex-direction:column}
         .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-        .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:20px}
-        .logo span.coin{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#facc15,#f97316);display:inline-flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 12px rgba(250,204,21,.9)}
+        .logo{display:flex;flex-direction:column;gap:2px}
+        .logo-row{display:flex;align-items:center;gap:8px}
+        .logo span.coin{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:inline-flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 12px rgba(129,140,248,.9)}
+        .logo-title{font-weight:700;font-size:18px}
+        .level-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:rgba(15,23,42,.9);font-size:12px}
+        .level-pill span.num{font-weight:700;color:#a5b4fc}
         .balance{text-align:right}
         .balance-main{font-size:20px;font-weight:700}
-        .balance-sub{font-size:12px;opacity:.8;line-height:1.2}
+        .balance-sub{font-size:11px;opacity:.8;line-height:1.2}
         .content{flex:1;display:flex;flex-direction:column;align-items:center;padding:4px 4px 0}
         .hamster-zone{margin-top:4px;margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:8px}
-        .hamster-wrapper{position:relative;width:250px;height:250px;border-radius:999px;background:radial-gradient(circle at 30% 20%,#fff,#e5e7eb 50%,#cbd5f5 80%);overflow:hidden;transition:transform .08s ease}
+        .hamster-wrapper{position:relative;width:220px;height:220px;border-radius:999px;background:radial-gradient(circle at 30% 20%,#4c1d95,#111827);overflow:hidden;transition:transform .08s ease}
         .hamster-wrapper.hit{transform:scale(1.04)}
-        .hamster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px}
-        .ring{position:absolute;inset:12px;border-radius:999px;border:4px solid rgba(59,130,246,.9);border-top-color:transparent;animation:spin 2s linear infinite}
+        .hamster-wrapper img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+        .ring{position:absolute;inset:10px;border-radius:999px;border:4px solid rgba(129,140,248,.9);border-top-color:transparent;animation:spin 2s linear infinite;pointer-events:none}
         @keyframes spin{to{transform:rotate(360deg)}}
         .float-coin{position:absolute;color:#facc15;font-weight:700;font-size:14px;text-shadow:0 0 6px rgba(0,0,0,.8);pointer-events:none;animation:floatUp .7s ease-out forwards}
         @keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-40px)}}
@@ -45,18 +50,19 @@
         .back-btn{width:28px;height:28px;border-radius:999px;border:none;background:rgba(31,41,55,0.95);color:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
         .panel-title{font-weight:600;font-size:14px}
         .panel-subtitle{font-size:11px;opacity:0.7;margin-top:2px}
-        .upgrade-item,.quest-item,.farm-item,.ach-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(55,65,81,.7)}
-        .upgrade-item:last-child,.quest-item:last-child,.farm-item:last-child,.ach-item:last-child{border-bottom:none}
-        .upgrade-main,.quest-main,.farm-main,.ach-main{display:flex;flex-direction:column;gap:2px}
-        .upgrade-title,.quest-title,.farm-title,.ach-title{font-weight:600}
-        .upgrade-desc,.quest-desc,.farm-desc,.ach-desc{font-size:11px;opacity:.8}
-        .upgrade-meta,.quest-meta,.farm-meta,.ach-meta{font-size:11px;opacity:.9}
-        .upgrade-btn,.quest-btn,.farm-btn{padding:6px 10px;border-radius:999px;border:none;background:linear-gradient(135deg,#facc15,#f97316);color:#111827;font-weight:600;font-size:11px;cursor:pointer;white-space:nowrap}
-        .upgrade-btn.disabled,.quest-btn.disabled,.farm-btn.disabled{background:#4b5563;color:#e5e7eb;cursor:default}
+        .upgrade-item,.quest-item,.farm-item,.ach-item,.steam-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(55,65,81,.7)}
+        .upgrade-item:last-child,.quest-item:last-child,.farm-item:last-child,.ach-item:last-child,.steam-item:last-child{border-bottom:none}
+        .upgrade-main,.quest-main,.farm-main,.ach-main,.steam-main{display:flex;flex-direction:column;gap:2px}
+        .upgrade-title,.quest-title,.farm-title,.ach-title,.steam-title{font-weight:600}
+        .upgrade-desc,.quest-desc,.farm-desc,.ach-desc,.steam-desc{font-size:11px;opacity:.8}
+        .upgrade-meta,.quest-meta,.farm-meta,.ach-meta,.steam-meta{font-size:11px;opacity:.9}
+        .btn-pill{padding:6px 10px;border-radius:999px;border:none;background:linear-gradient(135deg,#facc15,#f97316);color:#111827;font-weight:600;font-size:11px;cursor:pointer;white-space:nowrap}
+        .btn-pill.disabled{background:#4b5563;color:#e5e7eb;cursor:default}
         .ach-badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.8);opacity:.85}
         .ach-badge.done{border-color:#22c55e;color:#bbf7d0}
         .progress{width:100%;height:6px;border-radius:999px;background:#020617;margin-top:4px;overflow:hidden}
         .progress-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#22c55e,#a3e635);transition:width .2s}
+        .ref-link{font-size:11px;word-break:break-all;margin-top:4px;opacity:.8}
         .footer{margin-top:6px;font-size:11px;opacity:.6;text-align:center}
     </style>
 </head>
@@ -64,8 +70,13 @@
 <div class="app">
     <div class="header">
         <div class="logo">
-            <span class="coin">₿</span>
-            HamsterVerse
+            <div class="logo-row">
+                <span class="coin">S</span>
+                <span class="logo-title">HamsterSteam</span>
+            </div>
+            <div class="level-pill">
+                Уровень <span class="num" id="level-label">1</span>
+            </div>
         </div>
         <div class="balance">
             <div class="balance-main" id="coins-label">0</div>
@@ -74,10 +85,11 @@
     </div>
 
     <div class="content">
-        <!-- Главная зона с хомяком (видна только на вкладке Улучшения) -->
+        <!-- главная зона (только на вкладке Улучшения) -->
         <div class="hamster-zone" id="hamster-zone">
             <div class="hamster-wrapper" id="hamster-wrapper">
-                <div class="hamster">🐹</div>
+                <!-- картинка со Steam логотипом; файл steam_logo.png должен лежать рядом с index.html -->
+                <img src="steam_logo.png" alt="Steam hamster logo">
                 <div class="ring"></div>
             </div>
 
@@ -96,47 +108,38 @@
                 </div>
             </div>
 
-            <button class="click-btn" id="click-btn">Кликнуть 🐹</button>
+            <button class="click-btn" id="click-btn">Кликнуть 💸</button>
         </div>
 
-        <!-- Нижнее меню -->
+        <!-- нижнее меню -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="upgrades">
-                <span class="icon">⬆️</span>
-                Улучшения
+                <span class="icon">⬆️</span> Улучшения
             </button>
             <button class="tab-btn" data-tab="farm">
-                <span class="icon">🌾</span>
-                Ферма
+                <span class="icon">🌾</span> Ферма
             </button>
             <button class="tab-btn" data-tab="invites">
-                <span class="icon">👥</span>
-                Приглашения
+                <span class="icon">👥</span> Приглашения
             </button>
             <button class="tab-btn" data-tab="achievements">
-                <span class="icon">🏆</span>
-                Достижения
+                <span class="icon">🏆</span> Достижения
             </button>
             <button class="tab-btn" data-tab="quests">
-                <span class="icon">📋</span>
-                Задания
+                <span class="icon">📋</span> Задания
             </button>
         </div>
 
-        <!-- Страницы -->
+        <!-- страницы -->
         <!-- Улучшения -->
         <div class="panel" id="panel-upgrades">
-            <div class="panel-header">
-                <div class="panel-title">Улучшения</div>
-            </div>
-
             <div class="upgrade-item">
                 <div class="upgrade-main">
                     <div class="upgrade-title">Энергия</div>
                     <div class="upgrade-desc">Больше максимальной энергии и полный заряд.</div>
                     <div class="upgrade-meta" id="energy-meta">Уровень 1 · 10 энергии</div>
                 </div>
-                <button class="upgrade-btn" id="btn-upg-energy">Купить</button>
+                <button class="btn-pill" id="btn-upg-energy">Купить</button>
             </div>
 
             <div class="upgrade-item">
@@ -145,7 +148,7 @@
                     <div class="upgrade-desc">Увеличивает заработок за клик.</div>
                     <div class="upgrade-meta" id="click-meta">Уровень 1 · 1 за клик</div>
                 </div>
-                <button class="upgrade-btn" id="btn-upg-click">Купить</button>
+                <button class="btn-pill" id="btn-upg-click">Купить</button>
             </div>
 
             <div class="upgrade-item">
@@ -154,7 +157,7 @@
                     <div class="upgrade-desc">Базовый пассивный доход каждую секунду.</div>
                     <div class="upgrade-meta" id="auto-meta">Уровень 1 · 1 в секунду</div>
                 </div>
-                <button class="upgrade-btn" id="btn-upg-auto">Купить</button>
+                <button class="btn-pill" id="btn-upg-auto">Купить</button>
             </div>
 
             <div class="upgrade-item">
@@ -163,7 +166,26 @@
                     <div class="upgrade-desc">Быстрее восстанавливается энергия.</div>
                     <div class="upgrade-meta" id="regen-meta">Уровень 1 · 1.0 ⚡/сек</div>
                 </div>
-                <button class="upgrade-btn" id="btn-upg-regen">Купить</button>
+                <button class="btn-pill" id="btn-upg-regen">Купить</button>
+            </div>
+
+            <div class="upgrade-item">
+                <div class="upgrade-main">
+                    <div class="upgrade-title">Уровень профиля</div>
+                    <div class="upgrade-desc">Открывает статус и может давать бонусы.</div>
+                    <div class="upgrade-meta" id="level-meta">Уровень 1 · след. 1000 монет</div>
+                </div>
+                <button class="btn-pill" id="btn-upg-level">Повысить</button>
+            </div>
+
+            <!-- STEAM ВЫВОД -->
+            <div class="steam-item">
+                <div class="steam-main">
+                    <div class="steam-title">Steam рубли</div>
+                    <div class="steam-desc">10 000 000 монет = 1₽. Вывод с 100₽.</div>
+                    <div class="steam-meta" id="steam-meta">Баланс Steam: 0₽ · доступно 0₽</div>
+                </div>
+                <button class="btn-pill" id="btn-steam-cashout">Вывести</button>
             </div>
         </div>
 
@@ -173,7 +195,7 @@
                 <button class="back-btn" data-back="upgrades">←</button>
                 <div>
                     <div class="panel-title">Ферма</div>
-                    <div class="panel-subtitle">Покупай структуры для пассивного дохода</div>
+                    <div class="panel-subtitle">Пассивный доход от структур</div>
                 </div>
             </div>
             <div id="farm-list"></div>
@@ -185,10 +207,14 @@
                 <button class="back-btn" data-back="upgrades">←</button>
                 <div>
                     <div class="panel-title">Приглашения</div>
-                    <div class="panel-subtitle">Рефералы и бонусы за друзей</div>
+                    <div class="panel-subtitle">Каждый новый друг даёт 10 000 монет</div>
                 </div>
             </div>
-            Приглашай друзей в бота и делись своим реферальным кодом. В будущем здесь можно сделать реальные бонусы 👥
+            <div class="steam-desc">
+                Отправь другу ссылку ниже. Если он зайдёт в бота по ней и нажмёт кнопку
+                «Открыть игру», вы оба получите по 10 000 монет.
+            </div>
+            <div class="ref-link" id="ref-link"></div>
         </div>
 
         <!-- Достижения -->
@@ -197,7 +223,7 @@
                 <button class="back-btn" data-back="upgrades">←</button>
                 <div>
                     <div class="panel-title">Достижения</div>
-                    <div class="panel-subtitle">Собери все награды хомяка</div>
+                    <div class="panel-subtitle">Собери все награды</div>
                 </div>
             </div>
             <div id="ach-list"></div>
@@ -209,7 +235,7 @@
                 <button class="back-btn" data-back="upgrades">←</button>
                 <div>
                     <div class="panel-title">Задания</div>
-                    <div class="panel-subtitle">Выполняй квесты и забирай награды</div>
+                    <div class="panel-subtitle">Выполняй и забирай награды</div>
                 </div>
             </div>
             <div id="quest-list"></div>
@@ -217,11 +243,25 @@
     </div>
 
     <div class="footer">
-        Прогресс сохраняется на устройстве (localStorage)
+        Прогресс хранится на сервере (по Telegram-ID)
     </div>
 </div>
 
 <script>
+    // === НАСТРОЙКИ API ===
+    const API_BASE = "https://your-backend-domain.com"; // URL FastAPI
+    const BOT_USERNAME = "your_bot_username";            // без @
+
+    // === Анти-double-tap zoom ===
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, {passive: false});
+
     const tg = window.Telegram?.WebApp;
     if (tg) {
         tg.ready();
@@ -238,6 +278,10 @@
     const energyFill = document.getElementById("energy-fill");
     const hamsterWrapper = document.getElementById("hamster-wrapper");
     const hamsterZone = document.getElementById("hamster-zone");
+    const levelLabel = document.getElementById("level-label");
+    const levelMeta = document.getElementById("level-meta");
+    const steamMeta = document.getElementById("steam-meta");
+    const refLinkEl = document.getElementById("ref-link");
 
     const energyMeta = document.getElementById("energy-meta");
     const clickMeta = document.getElementById("click-meta");
@@ -248,6 +292,8 @@
     const btnUpgClick = document.getElementById("btn-upg-click");
     const btnUpgAuto = document.getElementById("btn-upg-auto");
     const btnUpgRegen = document.getElementById("btn-upg-regen");
+    const btnUpgLevel = document.getElementById("btn-upg-level");
+    const btnSteamCashout = document.getElementById("btn-steam-cashout");
 
     const farmList = document.getElementById("farm-list");
     const questList = document.getElementById("quest-list");
@@ -261,7 +307,6 @@
         achievements: document.getElementById("panel-achievements"),
         quests: document.getElementById("panel-quests")
     };
-
     const backButtons = document.querySelectorAll(".back-btn");
 
     let userId = "guest";
@@ -270,8 +315,6 @@
         userId = String(u.id);
         userLabel.textContent = `${u.first_name || "Игрок"} · ID ${u.id}`;
     }
-
-    const STORAGE_KEY = "hamster_state_" + userId;
 
     const FARM_DEFS = [
         {id:"cage",   title:"Клетка",         desc:"+2 в секунду за уровень",   baseIncome:2,   baseCost:200},
@@ -282,9 +325,9 @@
     ];
 
     const QUEST_DEFS = [
-        {id:"clicks50",  title:"Сделай 50 кликов",    desc:"Нажимай по хомяку",          reward:200,  target:50,  type:"clicks"},
-        {id:"coins1000", title:"Накопи 1000 монет",   desc:"Достигни баланса 1000",     reward:500,  target:1000,type:"coins"},
-        {id:"passive20", title:"20 монет/секунду",    desc:"Разгони пассивный доход",   reward:800,  target:20,  type:"auto"},
+        {id:"clicks50",  title:"Сделай 50 кликов",    desc:"Нажимай по логотипу",       reward:200,  target:50,  type:"clicks"},
+        {id:"coins1000", title:"Накопи 1000 монет",   desc:"Достигни баланса 1000",    reward:500,  target:1000,type:"coins"},
+        {id:"passive20", title:"20 монет/секунду",    desc:"Разгони пассивный доход",  reward:800,  target:20,  type:"auto"},
     ];
 
     const ACH_DEFS = [
@@ -296,61 +339,67 @@
 
     const DEFAULT_STATE = {
         coins: 0,
-
         clickLevel: 1,
         clickValue: 1,
-
         energyLevel: 1,
         maxEnergy: 10,
         energy: 10,
-
         autoLevel: 1,
-
         regenLevel: 1,
         energyRegenRate: 1.0,
-
         lastEnergyAt: Date.now(),
         lastIncomeAt: Date.now(),
-
         farms: FARM_DEFS.map(f => ({id:f.id, level:0})),
-
         clickCount: 0,
         totalEarned: 0,
-
-        quests: QUEST_DEFS.reduce((acc,q)=>{acc[q.id]={claimed:false};return acc;}, {}),
-        achievements: ACH_DEFS.reduce((acc,a)=>{acc[a.id]={unlocked:false};return acc;}, {})
+        quests: QUEST_DEFS.reduce((a,q)=>{a[q.id]={claimed:false};return a;},{}),
+        achievements: ACH_DEFS.reduce((a,x)=>{a[x.id]={unlocked:false};return a;},{}),
+        level: 1,
+        steam_rub: 0
     };
 
     let state = {...DEFAULT_STATE};
 
-    function loadState() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return;
-            const parsed = JSON.parse(raw);
-            state = {...DEFAULT_STATE, ...parsed};
-            if (!state.farms || !Array.isArray(state.farms)) state.farms = DEFAULT_STATE.farms;
-            if (!state.quests)       state.quests       = DEFAULT_STATE.quests;
-            if (!state.achievements) state.achievements = DEFAULT_STATE.achievements;
-        } catch(e){console.warn("loadState",e)}
+    function formatNumber(n){return n.toLocaleString("ru-RU");}
+
+    // === API ===
+    async function loadStateFromServer(){
+        try{
+            const res = await fetch(`${API_BASE}/state/${userId}`);
+            if(!res.ok) throw new Error("bad");
+            const data = await res.json();
+            state = {...DEFAULT_STATE, ...data};
+        }catch(e){
+            console.warn("load error, fallback default", e);
+            state = {...DEFAULT_STATE};
+        }
     }
 
-    function saveState() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch(e){console.warn("saveState",e)}
+    async function saveStateToServer(){
+        try{
+            await fetch(`${API_BASE}/state`,{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({user_id:userId, state})
+            });
+        }catch(e){
+            console.warn("save error",e);
+        }
     }
-
-    function formatNumber(n){return n.toLocaleString("ru-RU")}
 
     function getClickUpgradeCost(){return Math.round(50*Math.pow(1.5,state.clickLevel-1));}
     function getEnergyUpgradeCost(){return Math.round(75*Math.pow(1.5,state.energyLevel-1));}
     function getAutoUpgradeCost(){return Math.round(100*Math.pow(1.6,state.autoLevel-1));}
     function getRegenUpgradeCost(){return Math.round(120*Math.pow(1.6,state.regenLevel-1));}
+    function getLevelUpgradeCost(){
+        if(state.level === 1) return 1000;
+        if(state.level === 2) return 10_000;
+        return Math.round(10_000 * Math.pow(3, state.level-2)); // дальше сильно дороже
+    }
 
     function getFarmState(id){
         const f = state.farms.find(x=>x.id===id);
-        if (!f){const nf={id,level:0};state.farms.push(nf);return nf;}
+        if(!f){const nf={id,level:0};state.farms.push(nf);return nf;}
         return f;
     }
     function getFarmCost(def){
@@ -358,240 +407,230 @@
         return Math.round(def.baseCost * Math.pow(1.7, fs.level));
     }
     function getFarmIncome(){
-        let sum = 0;
+        let sum=0;
         for(const def of FARM_DEFS){
             const fs = getFarmState(def.id);
             sum += fs.level * def.baseIncome;
         }
         return sum;
     }
-    function getAutoIncome(){
-        return state.autoLevel + getFarmIncome();
-    }
+    function getAutoIncome(){return state.autoLevel + getFarmIncome();}
 
     function regenEnergy(now){
-        const deltaSec = (now - state.lastEnergyAt)/1000;
+        const deltaSec=(now-state.lastEnergyAt)/1000;
         if(deltaSec<=0)return;
-        const add = Math.floor(deltaSec * state.energyRegenRate);
+        const add=Math.floor(deltaSec*state.energyRegenRate);
         if(add>0){
-            state.energy = Math.min(state.maxEnergy, state.energy+add);
-            state.lastEnergyAt += (add / state.energyRegenRate) * 1000;
+            state.energy=Math.min(state.maxEnergy,state.energy+add);
+            state.lastEnergyAt+= (add/state.energyRegenRate)*1000;
         }
     }
-
     function autoIncomeTick(now){
-        const deltaSec = (now - state.lastIncomeAt)/1000;
+        const deltaSec=(now-state.lastIncomeAt)/1000;
         if(deltaSec<=0)return;
-        const secPass = Math.floor(deltaSec);
+        const secPass=Math.floor(deltaSec);
         if(secPass>0){
-            const incomePerSec = getAutoIncome();
-            const add = secPass * incomePerSec;
-            state.coins += add;
-            state.totalEarned += add;
-            state.lastIncomeAt += secPass*1000;
+            const incomePerSec=getAutoIncome();
+            const add=secPass*incomePerSec;
+            state.coins+=add;
+            state.totalEarned+=add;
+            state.lastIncomeAt+=secPass*1000;
         }
     }
 
-    function toggleBtn(btn, condition){
-        if(condition){btn.classList.remove("disabled");}
-        else{btn.classList.add("disabled");}
+    function toggleBtn(btn, ok){
+        if(ok) btn.classList.remove("disabled");
+        else btn.classList.add("disabled");
     }
 
-    // Достижения
     function getAchProgress(ach){
         if(ach.type==="clicks") return Math.min(state.clickCount, ach.target);
         if(ach.type==="earned") return Math.min(state.totalEarned, ach.target);
         if(ach.type==="auto")   return Math.min(getAutoIncome(), ach.target);
         return 0;
     }
-    function isAchCompleted(ach){return getAchProgress(ach) >= ach.target;}
+    function isAchCompleted(a){return getAchProgress(a)>=a.target;}
 
     function renderAchievements(){
-        achList.innerHTML = "";
-        for(const ach of ACH_DEFS){
-            const st = state.achievements[ach.id] || {unlocked:false};
-            const item = document.createElement("div");
-            item.className = "ach-item";
+        achList.innerHTML="";
+        for(const a of ACH_DEFS){
+            const st = state.achievements[a.id] || {unlocked:false};
+            const item=document.createElement("div");
+            item.className="ach-item";
 
-            const main = document.createElement("div");
-            main.className = "ach-main";
+            const main=document.createElement("div");
+            main.className="ach-main";
 
-            const title = document.createElement("div");
-            title.className = "ach-title";
-            title.textContent = ach.title;
+            const title=document.createElement("div");
+            title.className="ach-title";
+            title.textContent=a.title;
 
-            const desc = document.createElement("div");
-            desc.className = "ach-desc";
-            desc.textContent = ach.desc;
+            const desc=document.createElement("div");
+            desc.className="ach-desc";
+            desc.textContent=a.desc;
 
-            const meta = document.createElement("div");
-            meta.className = "ach-meta";
-            const progress = getAchProgress(ach);
-            meta.textContent = `${formatNumber(progress)} / ${formatNumber(ach.target)}`;
+            const meta=document.createElement("div");
+            meta.className="ach-meta";
+            const pr=getAchProgress(a);
+            meta.textContent=`${formatNumber(pr)} / ${formatNumber(a.target)}`;
 
-            const badge = document.createElement("div");
-            badge.className = "ach-badge";
-            const completed = isAchCompleted(ach);
-            if(completed){badge.classList.add("done");badge.textContent="Открыто";}
-            else{badge.textContent="Не выполнено";}
+            const badge=document.createElement("div");
+            badge.className="ach-badge";
+            const done=isAchCompleted(a);
+            if(done){badge.classList.add("done");badge.textContent="Открыто";}
+            else badge.textContent="Не выполнено";
 
-            const progressBar = document.createElement("div");
-            progressBar.className = "progress";
-            const fill = document.createElement("div");
-            fill.className = "progress-fill";
-            const ratio = Math.max(0, Math.min(1, progress / ach.target));
-            fill.style.width = (ratio*100)+"%";
-            progressBar.appendChild(fill);
+            const pb=document.createElement("div");
+            pb.className="progress";
+            const fill=document.createElement("div");
+            fill.className="progress-fill";
+            const ratio=Math.max(0,Math.min(1,pr/a.target));
+            fill.style.width=(ratio*100)+"%";
+            pb.appendChild(fill);
 
-            main.appendChild(title);
-            main.appendChild(desc);
-            main.appendChild(meta);
-            main.appendChild(progressBar);
-
-            item.appendChild(main);
-            item.appendChild(badge);
+            main.appendChild(title);main.appendChild(desc);main.appendChild(meta);main.appendChild(pb);
+            item.appendChild(main);item.appendChild(badge);
             achList.appendChild(item);
 
-            st.unlocked = completed;
-            state.achievements[ach.id] = st;
+            st.unlocked=done;
+            state.achievements[a.id]=st;
         }
     }
 
-    // Квесты
     function getQuestProgress(q){
-        if(q.type==="clicks") return Math.min(state.clickCount, q.target);
-        if(q.type==="coins")  return Math.min(state.coins, q.target);
-        if(q.type==="auto")   return Math.min(getAutoIncome(), q.target);
+        if(q.type==="clicks") return Math.min(state.clickCount,q.target);
+        if(q.type==="coins")  return Math.min(state.coins,q.target);
+        if(q.type==="auto")   return Math.min(getAutoIncome(),q.target);
         return 0;
     }
-    function isQuestCompleted(q){return getQuestProgress(q) >= q.target;}
+    function isQuestCompleted(q){return getQuestProgress(q)>=q.target;}
 
     function renderQuestPanel(){
-        questList.innerHTML = "";
+        questList.innerHTML="";
         for(const q of QUEST_DEFS){
-            const s = state.quests[q.id] || {claimed:false};
-            const item = document.createElement("div");
-            item.className = "quest-item";
+            const s=state.quests[q.id] || {claimed:false};
+            const item=document.createElement("div");
+            item.className="quest-item";
 
-            const main = document.createElement("div");
-            main.className = "quest-main";
+            const main=document.createElement("div");
+            main.className="quest-main";
 
-            const title = document.createElement("div");
-            title.className = "quest-title";
-            title.textContent = q.title;
+            const title=document.createElement("div");
+            title.className="quest-title";
+            title.textContent=q.title;
 
-            const desc = document.createElement("div");
-            desc.className = "quest-desc";
-            desc.textContent = q.desc;
+            const desc=document.createElement("div");
+            desc.className="quest-desc";
+            desc.textContent=q.desc;
 
-            const meta = document.createElement("div");
-            meta.className = "quest-meta";
-            const progressVal = getQuestProgress(q);
-            meta.textContent = `Награда: ${formatNumber(q.reward)} · ${formatNumber(progressVal)} / ${formatNumber(q.target)}`;
+            const meta=document.createElement("div");
+            meta.className="quest-meta";
+            const pr=getQuestProgress(q);
+            meta.textContent=`Награда: ${formatNumber(q.reward)} · ${formatNumber(pr)} / ${formatNumber(q.target)}`;
 
-            const progressBar = document.createElement("div");
-            progressBar.className = "progress";
-            const fill = document.createElement("div");
-            fill.className = "progress-fill";
-            const ratio = Math.max(0, Math.min(1, progressVal / q.target));
-            fill.style.width = (ratio*100)+"%";
-            progressBar.appendChild(fill);
+            const pb=document.createElement("div");
+            pb.className="progress";
+            const fill=document.createElement("div");
+            fill.className="progress-fill";
+            const ratio=Math.max(0,Math.min(1,pr/q.target));
+            fill.style.width=(ratio*100)+"%";
+            pb.appendChild(fill);
 
-            main.appendChild(title);
-            main.appendChild(desc);
-            main.appendChild(meta);
-            main.appendChild(progressBar);
+            main.appendChild(title);main.appendChild(desc);main.appendChild(meta);main.appendChild(pb);
 
-            const btn = document.createElement("button");
-            btn.className = "quest-btn";
+            const btn=document.createElement("button");
+            btn.className="btn-pill";
+            const done=isQuestCompleted(q);
 
-            const completed = isQuestCompleted(q);
-
-            if(s.claimed){
-                btn.textContent = "Получено";
-                btn.classList.add("disabled");
-            }else if(completed){
-                btn.textContent = "Забрать";
-                btn.addEventListener("click", ()=>{
+            if(s.claimed){btn.textContent="Получено";btn.classList.add("disabled");}
+            else if(done){
+                btn.textContent="Забрать";
+                btn.addEventListener("click",()=>{
                     if(state.quests[q.id].claimed) return;
-                    state.quests[q.id].claimed = true;
-                    state.coins += q.reward;
-                    state.totalEarned += q.reward;
-                    updateUI();
-                    saveState();
+                    state.quests[q.id].claimed=true;
+                    state.coins+=q.reward;
+                    state.totalEarned+=q.reward;
+                    updateUI(); saveStateToServer();
                 });
             }else{
-                btn.textContent = "В процессе";
-                btn.classList.add("disabled");
+                btn.textContent="В процессе";btn.classList.add("disabled");
             }
 
-            item.appendChild(main);
-            item.appendChild(btn);
+            item.appendChild(main);item.appendChild(btn);
             questList.appendChild(item);
-            state.quests[q.id] = s;
+            state.quests[q.id]=s;
         }
     }
 
-    // Фермы
     function renderFarmPanel(){
-        farmList.innerHTML = "";
+        farmList.innerHTML="";
         for(const def of FARM_DEFS){
-            const fs = getFarmState(def.id);
-            const item = document.createElement("div");
-            item.className = "farm-item";
+            const fs=getFarmState(def.id);
+            const item=document.createElement("div");
+            item.className="farm-item";
 
-            const main = document.createElement("div");
-            main.className = "farm-main";
+            const main=document.createElement("div");
+            main.className="farm-main";
 
-            const title = document.createElement("div");
-            title.className = "farm-title";
-            title.textContent = def.title;
+            const title=document.createElement("div");
+            title.className="farm-title";
+            title.textContent=def.title;
 
-            const desc = document.createElement("div");
-            desc.className = "farm-desc";
-            desc.textContent = def.desc;
+            const desc=document.createElement("div");
+            desc.className="farm-desc";
+            desc.textContent=def.desc;
 
-            const meta = document.createElement("div");
-            meta.className = "farm-meta";
-            meta.textContent = `Уровень ${fs.level} · ${fs.level*def.baseIncome} в секунду`;
+            const meta=document.createElement("div");
+            meta.className="farm-meta";
+            meta.textContent=`Уровень ${fs.level} · ${fs.level*def.baseIncome} в секунду`;
 
-            main.appendChild(title);
-            main.appendChild(desc);
-            main.appendChild(meta);
+            main.appendChild(title);main.appendChild(desc);main.appendChild(meta);
 
-            const btn = document.createElement("button");
-            btn.className = "farm-btn";
-            const cost = getFarmCost(def);
-            btn.textContent = `Купить · ${formatNumber(cost)}`;
-            toggleBtn(btn, state.coins>=cost);
+            const btn=document.createElement("button");
+            btn.className="btn-pill";
+            const cost=getFarmCost(def);
+            btn.textContent=`Купить · ${formatNumber(cost)}`;
+            toggleBtn(btn,state.coins>=cost);
 
-            btn.addEventListener("click", ()=>{
+            btn.addEventListener("click",()=>{
                 if(state.coins<cost)return;
-                state.coins -= cost;
-                fs.level += 1;
-                updateUI();
-                saveState();
+                state.coins-=cost;
+                fs.level+=1;
+                updateUI(); saveStateToServer();
             });
 
-            item.appendChild(main);
-            item.appendChild(btn);
+            item.appendChild(main);item.appendChild(btn);
             farmList.appendChild(item);
         }
     }
 
-    // UI
+    function updateSteamMeta(){
+        const rate = 10_000_000;
+        const availableRub = Math.floor(state.coins / rate);
+        const canWithdraw = availableRub >= 100;
+        steamMeta.textContent = `Баланс Steam: ${state.steam_rub}₽ · доступно ${availableRub}₽`;
+        toggleBtn(btnSteamCashout, canWithdraw);
+    }
+
+    function updateRefLink(){
+        const link = `https://t.me/${BOT_USERNAME}?start=ref_${userId}`;
+        refLinkEl.textContent = link;
+    }
+
     function updateUI(){
         const autoIncome = getAutoIncome();
-
         coinsLabel.textContent = formatNumber(state.coins);
         incomeLabel.textContent = `${state.clickValue} за клик · ${autoIncome} в секунду`;
         greenInfo.textContent  = `${state.clickValue} за клик · ${autoIncome} в секунду`;
 
         energyLabel.textContent = `${state.energy} / ${state.maxEnergy}`;
-        const perc = (state.energy/state.maxEnergy)*100;
-        energyFill.style.width = `${perc}%`;
+        energyFill.style.width = `${(state.energy/state.maxEnergy)*100}%`;
 
         toggleBtn(clickBtn, state.energy>0);
+
+        levelLabel.textContent = state.level;
+        const nextCost = getLevelUpgradeCost();
+        levelMeta.textContent = `Уровень ${state.level} · след. ${formatNumber(nextCost)} монет`;
 
         energyMeta.textContent = `Уровень ${state.energyLevel} · ${state.maxEnergy} энергии`;
         clickMeta.textContent  = `Уровень ${state.clickLevel} · ${state.clickValue} за клик`;
@@ -602,147 +641,130 @@
         const costC = getClickUpgradeCost();
         const costA = getAutoUpgradeCost();
         const costR = getRegenUpgradeCost();
+        const costL = getLevelUpgradeCost();
 
         btnUpgEnergy.textContent = `Купить · ${formatNumber(costE)}`;
         btnUpgClick.textContent  = `Купить · ${formatNumber(costC)}`;
         btnUpgAuto.textContent   = `Купить · ${formatNumber(costA)}`;
         btnUpgRegen.textContent  = `Купить · ${formatNumber(costR)}`;
+        btnUpgLevel.textContent  = `Повысить · ${formatNumber(costL)}`;
 
         toggleBtn(btnUpgEnergy, state.coins>=costE);
         toggleBtn(btnUpgClick,  state.coins>=costC);
         toggleBtn(btnUpgAuto,   state.coins>=costA);
         toggleBtn(btnUpgRegen,  state.coins>=costR);
+        toggleBtn(btnUpgLevel,  state.coins>=costL);
 
         renderFarmPanel();
         renderQuestPanel();
         renderAchievements();
+        updateSteamMeta();
+        updateRefLink();
     }
 
-    // Анимация клика
     function spawnFloatText(amount){
-        const el = document.createElement("div");
-        el.className = "float-coin";
-        el.textContent = `+${amount}`;
-
-        const x = Math.random()*0.6 + 0.2;
-        const y = Math.random()*0.4 + 0.3;
-        el.style.left = (x*100)+"%";
-        el.style.top  = (y*100)+"%";
-        el.style.transform = "translate(-50%, -50%)";
-
+        const el=document.createElement("div");
+        el.className="float-coin";
+        el.textContent=`+${amount}`;
+        const x=Math.random()*0.6+0.2;
+        const y=Math.random()*0.4+0.3;
+        el.style.left=(x*100)+"%";
+        el.style.top=(y*100)+"%";
+        el.style.transform="translate(-50%, -50%)";
         hamsterWrapper.appendChild(el);
-        el.addEventListener("animationend", ()=>el.remove());
+        el.addEventListener("animationend",()=>el.remove());
     }
-
     function hitHamster(){
         hamsterWrapper.classList.add("hit");
         setTimeout(()=>hamsterWrapper.classList.remove("hit"),100);
     }
 
-    // Клик
-    clickBtn.addEventListener("click", ()=>{
-        const now = Date.now();
-        regenEnergy(now);
-        autoIncomeTick(now);
+    clickBtn.addEventListener("click",()=>{
+        const now=Date.now();
+        regenEnergy(now); autoIncomeTick(now);
+        if(state.energy<=0){updateUI();return;}
+        state.energy-=1;
+        state.coins+=state.clickValue;
+        state.clickCount+=1;
+        state.totalEarned+=state.clickValue;
+        hitHamster(); spawnFloatText(state.clickValue);
+        updateUI(); saveStateToServer();
+    });
 
-        if(state.energy<=0){
-            updateUI();
-            return;
+    btnUpgEnergy.addEventListener("click",()=>{
+        const cost=getEnergyUpgradeCost();
+        if(state.coins<cost)return;
+        state.coins-=cost;
+        state.energyLevel+=1;
+        state.maxEnergy+=5;
+        state.energy=state.maxEnergy;
+        updateUI(); saveStateToServer();
+    });
+    btnUpgClick.addEventListener("click",()=>{
+        const cost=getClickUpgradeCost();
+        if(state.coins<cost)return;
+        state.coins-=cost;
+        state.clickLevel+=1;
+        state.clickValue+=1;
+        updateUI(); saveStateToServer();
+    });
+    btnUpgAuto.addEventListener("click",()=>{
+        const cost=getAutoUpgradeCost();
+        if(state.coins<cost)return;
+        state.coins-=cost;
+        state.autoLevel+=1;
+        updateUI(); saveStateToServer();
+    });
+    btnUpgRegen.addEventListener("click",()=>{
+        const cost=getRegenUpgradeCost();
+        if(state.coins<cost)return;
+        state.coins-=cost;
+        state.regenLevel+=1;
+        state.energyRegenRate+=0.25;
+        updateUI(); saveStateToServer();
+    });
+    btnUpgLevel.addEventListener("click",()=>{
+        const cost=getLevelUpgradeCost();
+        if(state.coins<cost)return;
+        state.coins-=cost;
+        state.level+=1;
+        updateUI(); saveStateToServer();
+    });
+
+    btnSteamCashout.addEventListener("click",()=>{
+        const rate=10_000_000;
+        const availableRub=Math.floor(state.coins / rate);
+        if(availableRub<100) return;
+        const rubles=availableRub; // можно сделать только кратно 100, но сейчас всё
+        state.coins -= rubles*rate;
+        state.steam_rub += rubles;
+        updateUI(); saveStateToServer();
+        if(tg){
+            tg.showAlert(`Зачислено ${rubles}₽ на внутренний Steam-баланс.\n(Это пока игровая механика, реальный вывод нужно подключать отдельно.)`);
         }
-
-        state.energy -= 1;
-        state.coins += state.clickValue;
-        state.clickCount += 1;
-        state.totalEarned += state.clickValue;
-
-        hitHamster();
-        spawnFloatText(state.clickValue);
-
-        updateUI();
-        saveState();
     });
 
-    // Апгрейды
-    btnUpgEnergy.addEventListener("click", ()=>{
-        const cost = getEnergyUpgradeCost();
-        if(state.coins<cost)return;
-        state.coins -= cost;
-        state.energyLevel += 1;
-        state.maxEnergy += 5;
-        state.energy = state.maxEnergy;
-        updateUI();
-        saveState();
-    });
-
-    btnUpgClick.addEventListener("click", ()=>{
-        const cost = getClickUpgradeCost();
-        if(state.coins<cost)return;
-        state.coins -= cost;
-        state.clickLevel += 1;
-        state.clickValue += 1;
-        updateUI();
-        saveState();
-    });
-
-    btnUpgAuto.addEventListener("click", ()=>{
-        const cost = getAutoUpgradeCost();
-        if(state.coins<cost)return;
-        state.coins -= cost;
-        state.autoLevel += 1;
-        updateUI();
-        saveState();
-    });
-
-    btnUpgRegen.addEventListener("click", ()=>{
-        const cost = getRegenUpgradeCost();
-        if(state.coins<cost)return;
-        state.coins -= cost;
-        state.regenLevel += 1;
-        state.energyRegenRate += 0.25;
-        updateUI();
-        saveState();
-    });
-
-    // Переключение вкладок как страниц
     function switchTab(tab){
-        tabButtons.forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
+        tabButtons.forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
         Object.keys(panels).forEach(k=>{
             panels[k].classList.toggle("hidden",k!==tab);
         });
-        if (tab === "upgrades"){
-            hamsterZone.style.display = "flex";
-        } else {
-            hamsterZone.style.display = "none";
-        }
+        hamsterZone.style.display = (tab==="upgrades") ? "flex" : "none";
     }
-
-    tabButtons.forEach(btn=>{
-        btn.addEventListener("click",()=>{
-            switchTab(btn.dataset.tab);
-        });
-    });
-
-    backButtons.forEach(btn=>{
-        btn.addEventListener("click",()=>{
-            const target = btn.dataset.back || "upgrades";
-            switchTab(target);
-        });
-    });
+    tabButtons.forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+    backButtons.forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.back || "upgrades")));
 
     function gameLoop(){
-        const now = Date.now();
-        regenEnergy(now);
-        autoIncomeTick(now);
-        updateUI();
-        saveState();
+        const now=Date.now();
+        regenEnergy(now); autoIncomeTick(now);
+        updateUI(); saveStateToServer();
     }
 
-    loadState();
-    renderFarmPanel();
-    renderQuestPanel();
-    renderAchievements();
-    updateUI();
-    setInterval(gameLoop,300);
+    (async ()=>{
+        await loadStateFromServer();
+        updateUI();
+        setInterval(gameLoop,500);
+    })();
 </script>
 </body>
 </html>
