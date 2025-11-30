@@ -19,10 +19,13 @@
         .balance-sub{font-size:12px;opacity:.8;line-height:1.2}
         .content{flex:1;display:flex;flex-direction:column;align-items:center;padding:4px 4px 0}
         .hamster-zone{margin-top:4px;margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:8px}
-        .hamster-wrapper{position:relative;width:250px;height:250px;border-radius:999px;background:radial-gradient(circle at 30% 20%,#fff,#e5e7eb 50%,#cbd5f5 80%);overflow:hidden}
+        .hamster-wrapper{position:relative;width:250px;height:250px;border-radius:999px;background:radial-gradient(circle at 30% 20%,#fff,#e5e7eb 50%,#cbd5f5 80%);overflow:hidden;transition:transform .08s ease}
+        .hamster-wrapper.hit{transform:scale(1.04)}
         .hamster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px}
         .ring{position:absolute;inset:12px;border-radius:999px;border:4px solid rgba(59,130,246,.9);border-top-color:transparent;animation:spin 2s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
+        .float-coin{position:absolute;color:#facc15;font-weight:700;font-size:14px;text-shadow:0 0 6px rgba(0,0,0,.8);pointer-events:none;animation:floatUp .7s ease-out forwards}
+        @keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-40px)}}
         .stats-small{display:flex;flex-direction:column;gap:3px;font-size:13px;text-align:center}
         .green-tag{display:inline-block;padding:4px 10px;border-radius:999px;background:#22c55e;color:#022c22;font-weight:700;font-size:12px;box-shadow:0 4px 12px rgba(34,197,94,.6)}
         .energy-bar-wrap{width:100%;max-width:260px;margin:4px auto 0}
@@ -38,14 +41,18 @@
         .tab-btn.active{background:rgba(55,65,81,.9);color:#f9fafb}
         .panel{width:100%;max-width:360px;margin-top:8px;padding:10px;border-radius:16px;background:rgba(15,23,42,.96);font-size:13px}
         .panel.hidden{display:none}
-        .upgrade-item,.quest-item,.farm-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(55,65,81,.7)}
-        .upgrade-item:last-child,.quest-item:last-child,.farm-item:last-child{border-bottom:none}
-        .upgrade-main,.quest-main,.farm-main{display:flex;flex-direction:column;gap:2px}
-        .upgrade-title,.quest-title,.farm-title{font-weight:600}
-        .upgrade-desc,.quest-desc,.farm-desc{font-size:11px;opacity:.8}
-        .upgrade-meta,.quest-meta,.farm-meta{font-size:11px;opacity:.9}
+        .upgrade-item,.quest-item,.farm-item,.ach-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(55,65,81,.7)}
+        .upgrade-item:last-child,.quest-item:last-child,.farm-item:last-child,.ach-item:last-child{border-bottom:none}
+        .upgrade-main,.quest-main,.farm-main,.ach-main{display:flex;flex-direction:column;gap:2px}
+        .upgrade-title,.quest-title,.farm-title,.ach-title{font-weight:600}
+        .upgrade-desc,.quest-desc,.farm-desc,.ach-desc{font-size:11px;opacity:.8}
+        .upgrade-meta,.quest-meta,.farm-meta,.ach-meta{font-size:11px;opacity:.9}
         .upgrade-btn,.quest-btn,.farm-btn{padding:6px 10px;border-radius:999px;border:none;background:linear-gradient(135deg,#facc15,#f97316);color:#111827;font-weight:600;font-size:11px;cursor:pointer;white-space:nowrap}
         .upgrade-btn.disabled,.quest-btn.disabled,.farm-btn.disabled{background:#4b5563;color:#e5e7eb;cursor:default}
+        .ach-badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.8);opacity:.85}
+        .ach-badge.done{border-color:#22c55e;color:#bbf7d0}
+        .progress{width:100%;height:6px;border-radius:999px;background:#020617;margin-top:4px;overflow:hidden}
+        .progress-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#22c55e,#a3e635);transition:width .2s}
         .footer{margin-top:6px;font-size:11px;opacity:.6;text-align:center}
     </style>
 </head>
@@ -64,7 +71,7 @@
 
     <div class="content">
         <div class="hamster-zone">
-            <div class="hamster-wrapper">
+            <div class="hamster-wrapper" id="hamster-wrapper">
                 <div class="hamster">🐹</div>
                 <div class="ring"></div>
             </div>
@@ -110,6 +117,7 @@
             </button>
         </div>
 
+        <!-- Улучшения -->
         <div class="panel" id="panel-upgrades">
             <div class="upgrade-item">
                 <div class="upgrade-main">
@@ -132,25 +140,38 @@
             <div class="upgrade-item">
                 <div class="upgrade-main">
                     <div class="upgrade-title">Авто-клик</div>
-                    <div class="upgrade-desc">Пассивный заработок каждую секунду.</div>
+                    <div class="upgrade-desc">Базовый пассивный доход каждую секунду.</div>
                     <div class="upgrade-meta" id="auto-meta">Уровень 1 · 1 в секунду</div>
                 </div>
                 <button class="upgrade-btn" id="btn-upg-auto">Купить</button>
             </div>
+
+            <div class="upgrade-item">
+                <div class="upgrade-main">
+                    <div class="upgrade-title">Реген энергии</div>
+                    <div class="upgrade-desc">Быстрее восстанавливается энергия.</div>
+                    <div class="upgrade-meta" id="regen-meta">Уровень 1 · 1.0 ⚡/сек</div>
+                </div>
+                <button class="upgrade-btn" id="btn-upg-regen">Купить</button>
+            </div>
         </div>
 
+        <!-- Ферма -->
         <div class="panel hidden" id="panel-farm">
             <div id="farm-list"></div>
         </div>
 
+        <!-- Приглашения -->
         <div class="panel hidden" id="panel-invites">
-            Приглашай друзей в бота и выдавай им свой реферальный код. Тут потом можно сделать реальные бонусы 👥
+            Приглашай друзей в бота и делись своим реферальным кодом. В будущем здесь можно сделать реальные бонусы 👥
         </div>
 
+        <!-- Достижения -->
         <div class="panel hidden" id="panel-achievements">
-            Здесь можно будет показывать твои рекорды: общий заработок, лучший пассивный доход, количество кликов и т.д. 🏆
+            <div id="ach-list"></div>
         </div>
 
+        <!-- Задания -->
         <div class="panel hidden" id="panel-quests">
             <div id="quest-list"></div>
         </div>
@@ -176,17 +197,21 @@
     const userLabel = document.getElementById("user-label");
     const energyLabel = document.getElementById("energy-label");
     const energyFill = document.getElementById("energy-fill");
+    const hamsterWrapper = document.getElementById("hamster-wrapper");
 
     const energyMeta = document.getElementById("energy-meta");
     const clickMeta = document.getElementById("click-meta");
     const autoMeta = document.getElementById("auto-meta");
+    const regenMeta = document.getElementById("regen-meta");
 
     const btnUpgEnergy = document.getElementById("btn-upg-energy");
     const btnUpgClick = document.getElementById("btn-upg-click");
     const btnUpgAuto = document.getElementById("btn-upg-auto");
+    const btnUpgRegen = document.getElementById("btn-upg-regen");
 
     const farmList = document.getElementById("farm-list");
     const questList = document.getElementById("quest-list");
+    const achList   = document.getElementById("ach-list");
 
     const tabButtons = document.querySelectorAll(".tab-btn");
     const panels = {
@@ -206,15 +231,28 @@
 
     const STORAGE_KEY = "hamster_state_" + userId;
 
+    // ----- ФЕРМЫ -----
     const FARM_DEFS = [
-        {id:"cage",   title:"Клетка",       desc:"+2 в секунду за уровень",  baseIncome:2,  baseCost:200},
-        {id:"office", title:"Хомяк-офис",   desc:"+5 в секунду за уровень",  baseIncome:5,  baseCost:800},
-        {id:"stock",  title:"Хомяк-биржа",  desc:"+12 в секунду за уровень", baseIncome:12, baseCost:2500},
+        {id:"cage",   title:"Клетка",         desc:"+2 в секунду за уровень",   baseIncome:2,   baseCost:200},
+        {id:"office", title:"Хомяк-офис",     desc:"+5 в секунду за уровень",   baseIncome:5,   baseCost:800},
+        {id:"stock",  title:"Хомяк-биржа",    desc:"+12 в секунду за уровень",  baseIncome:12,  baseCost:2500},
+        {id:"crypto", title:"Крипто-ферма",   desc:"+30 в секунду за уровень",  baseIncome:30,  baseCost:8000},
+        {id:"orbita", title:"Орбит. станция", desc:"+80 в секунду за уровень",  baseIncome:80,  baseCost:20000},
     ];
 
+    // ----- ЗАДАНИЯ -----
     const QUEST_DEFS = [
-        {id:"clicks50",  title:"Сделай 50 кликов",   desc:"Нажимай по хомяку",  reward:200},
-        {id:"coins1000", title:"Накопи 1000 монет",  desc:"Текущий баланс",     reward:500},
+        {id:"clicks50",  title:"Сделай 50 кликов",    desc:"Нажимай по хомяку",          reward:200,  target:50,  type:"clicks"},
+        {id:"coins1000", title:"Накопи 1000 монет",   desc:"Достигни баланса 1000",     reward:500,  target:1000,type:"coins"},
+        {id:"passive20", title:"20 монет/секунду",    desc:"Разгони пассивный доход",   reward:800,  target:20,  type:"auto"},
+    ];
+
+    // ----- ДОСТИЖЕНИЯ -----
+    const ACH_DEFS = [
+        {id:"firstClick", title:"Первый шаг",  desc:"Сделай первый клик",           target:1,   type:"clicks"},
+        {id:"clicks500",  title:"Кликер",      desc:"Сделай 500 кликов",            target:500, type:"clicks"},
+        {id:"rich10k",    title:"Первая десятка", desc:"Заработай суммарно 10 000", target:10000,type:"earned"},
+        {id:"auto50",     title:"Пассивный бог",   desc:"Достигни 50 монет/сек",    target:50,  type:"auto"},
     ];
 
     const DEFAULT_STATE = {
@@ -229,6 +267,9 @@
 
         autoLevel: 1,
 
+        regenLevel: 1,
+        energyRegenRate: 1.0, // ⚡/сек
+
         lastEnergyAt: Date.now(),
         lastIncomeAt: Date.now(),
 
@@ -237,7 +278,8 @@
         clickCount: 0,
         totalEarned: 0,
 
-        quests: QUEST_DEFS.reduce((acc,q)=>{acc[q.id]={claimed:false};return acc;}, {})
+        quests: QUEST_DEFS.reduce((acc,q)=>{acc[q.id]={claimed:false};return acc;}, {}),
+        achievements: ACH_DEFS.reduce((acc,a)=>{acc[a.id]={unlocked:false};return acc;}, {})
     };
 
     let state = {...DEFAULT_STATE};
@@ -248,14 +290,9 @@
             if (!raw) return;
             const parsed = JSON.parse(raw);
             state = {...DEFAULT_STATE, ...parsed};
-
-            // если вдруг старое сохранение без ферм/квестов
-            if (!state.farms || !Array.isArray(state.farms)) {
-                state.farms = DEFAULT_STATE.farms;
-            }
-            if (!state.quests) {
-                state.quests = DEFAULT_STATE.quests;
-            }
+            if (!state.farms || !Array.isArray(state.farms)) state.farms = DEFAULT_STATE.farms;
+            if (!state.quests)       state.quests       = DEFAULT_STATE.quests;
+            if (!state.achievements) state.achievements = DEFAULT_STATE.achievements;
         } catch(e){console.warn("loadState",e)}
     }
 
@@ -267,26 +304,22 @@
 
     function formatNumber(n){return n.toLocaleString("ru-RU")}
 
-    function getClickUpgradeCost(){
-        return Math.round(50*Math.pow(1.5,state.clickLevel-1));
-    }
-    function getEnergyUpgradeCost(){
-        return Math.round(75*Math.pow(1.5,state.energyLevel-1));
-    }
-    function getAutoUpgradeCost(){
-        return Math.round(100*Math.pow(1.6,state.autoLevel-1));
-    }
+    // ----- Стоимости апгрейдов -----
+    function getClickUpgradeCost(){return Math.round(50*Math.pow(1.5,state.clickLevel-1));}
+    function getEnergyUpgradeCost(){return Math.round(75*Math.pow(1.5,state.energyLevel-1));}
+    function getAutoUpgradeCost(){return Math.round(100*Math.pow(1.6,state.autoLevel-1));}
+    function getRegenUpgradeCost(){return Math.round(120*Math.pow(1.6,state.regenLevel-1));}
 
+    // ----- Фермы -----
     function getFarmState(id){
         const f = state.farms.find(x=>x.id===id);
-        if (!f){
-            const nf = {id,level:0};
-            state.farms.push(nf);
-            return nf;
-        }
+        if (!f){const nf={id,level:0};state.farms.push(nf);return nf;}
         return f;
     }
-
+    function getFarmCost(def){
+        const fs = getFarmState(def.id);
+        return Math.round(def.baseCost * Math.pow(1.7, fs.level));
+    }
     function getFarmIncome(){
         let sum = 0;
         for(const def of FARM_DEFS){
@@ -300,13 +333,14 @@
         return state.autoLevel + getFarmIncome();
     }
 
+    // ----- Реген энергии и авто-доход -----
     function regenEnergy(now){
         const deltaSec = (now - state.lastEnergyAt)/1000;
         if(deltaSec<=0)return;
-        const add = Math.floor(deltaSec*1); // 1 энергия в секунду
+        const add = Math.floor(deltaSec * state.energyRegenRate);
         if(add>0){
             state.energy = Math.min(state.maxEnergy, state.energy+add);
-            state.lastEnergyAt += add*1000;
+            state.lastEnergyAt += (add / state.energyRegenRate) * 1000;
         }
     }
 
@@ -324,52 +358,154 @@
     }
 
     function toggleBtn(btn, condition){
-        if(condition){
-            btn.classList.remove("disabled");
-        }else{
-            btn.classList.add("disabled");
+        if(condition){btn.classList.remove("disabled");}
+        else{btn.classList.add("disabled");}
+    }
+
+    // ----- Достижения -----
+    function getAchProgress(ach){
+        if(ach.type==="clicks") return Math.min(state.clickCount, ach.target);
+        if(ach.type==="earned") return Math.min(state.totalEarned, ach.target);
+        if(ach.type==="auto")   return Math.min(getAutoIncome(), ach.target);
+        return 0;
+    }
+    function isAchCompleted(ach){
+        return getAchProgress(ach) >= ach.target;
+    }
+
+    function renderAchievements(){
+        achList.innerHTML = "";
+        for(const ach of ACH_DEFS){
+            const st = state.achievements[ach.id] || {unlocked:false};
+            const item = document.createElement("div");
+            item.className = "ach-item";
+
+            const main = document.createElement("div");
+            main.className = "ach-main";
+
+            const title = document.createElement("div");
+            title.className = "ach-title";
+            title.textContent = ach.title;
+
+            const desc = document.createElement("div");
+            desc.className = "ach-desc";
+            desc.textContent = ach.desc;
+
+            const meta = document.createElement("div");
+            meta.className = "ach-meta";
+            const progress = getAchProgress(ach);
+            meta.textContent = `${formatNumber(progress)} / ${formatNumber(ach.target)}`;
+
+            const badge = document.createElement("div");
+            badge.className = "ach-badge";
+            const completed = isAchCompleted(ach);
+            if(completed){
+                badge.classList.add("done");
+                badge.textContent = "Открыто";
+            }else{
+                badge.textContent = "Не выполнено";
+            }
+
+            const progressBar = document.createElement("div");
+            progressBar.className = "progress";
+            const fill = document.createElement("div");
+            fill.className = "progress-fill";
+            const ratio = Math.max(0, Math.min(1, progress / ach.target));
+            fill.style.width = (ratio*100)+"%";
+            progressBar.appendChild(fill);
+
+            main.appendChild(title);
+            main.appendChild(desc);
+            main.appendChild(meta);
+            main.appendChild(progressBar);
+
+            item.appendChild(main);
+            item.appendChild(badge);
+            achList.appendChild(item);
+
+            st.unlocked = completed;
+            state.achievements[ach.id] = st;
         }
     }
 
-    function updateUI(){
-        const autoIncome = getAutoIncome();
-
-        coinsLabel.textContent = formatNumber(state.coins);
-        incomeLabel.textContent = `${state.clickValue} за клик · ${autoIncome} в секунду`;
-        greenInfo.textContent  = `${state.clickValue} за клик · ${autoIncome} в секунду`;
-
-        energyLabel.textContent = `${state.energy} / ${state.maxEnergy}`;
-        const perc = (state.energy/state.maxEnergy)*100;
-        energyFill.style.width = `${perc}%`;
-
-        toggleBtn(clickBtn, state.energy>0);
-
-        energyMeta.textContent = `Уровень ${state.energyLevel} · ${state.maxEnergy} энергии`;
-        clickMeta.textContent  = `Уровень ${state.clickLevel} · ${state.clickValue} за клик`;
-        autoMeta.textContent   = `Уровень ${state.autoLevel} · ${state.autoLevel} базовый авто-клик`;
-
-        const costE = getEnergyUpgradeCost();
-        const costC = getClickUpgradeCost();
-        const costA = getAutoUpgradeCost();
-
-        btnUpgEnergy.textContent = `Купить · ${formatNumber(costE)}`;
-        btnUpgClick.textContent  = `Купить · ${formatNumber(costC)}`;
-        btnUpgAuto.textContent   = `Купить · ${formatNumber(costA)}`;
-
-        toggleBtn(btnUpgEnergy, state.coins>=costE);
-        toggleBtn(btnUpgClick,  state.coins>=costC);
-        toggleBtn(btnUpgAuto,   state.coins>=costA);
-
-        renderFarmPanel();
-        renderQuestPanel();
+    // ----- Квесты -----
+    function getQuestProgress(q){
+        if(q.type==="clicks") return Math.min(state.clickCount, q.target);
+        if(q.type==="coins")  return Math.min(state.coins, q.target);
+        if(q.type==="auto")   return Math.min(getAutoIncome(), q.target);
+        return 0;
+    }
+    function isQuestCompleted(q){
+        return getQuestProgress(q) >= q.target;
     }
 
-    // --- ФЕРМА ---
-    function getFarmCost(def){
-        const fs = getFarmState(def.id);
-        return Math.round(def.baseCost * Math.pow(1.7, fs.level));
+    function renderQuestPanel(){
+        questList.innerHTML = "";
+        for(const q of QUEST_DEFS){
+            const s = state.quests[q.id] || {claimed:false};
+            const item = document.createElement("div");
+            item.className = "quest-item";
+
+            const main = document.createElement("div");
+            main.className = "quest-main";
+
+            const title = document.createElement("div");
+            title.className = "quest-title";
+            title.textContent = q.title;
+
+            const desc = document.createElement("div");
+            desc.className = "quest-desc";
+            desc.textContent = q.desc;
+
+            const meta = document.createElement("div");
+            meta.className = "quest-meta";
+            const progressVal = getQuestProgress(q);
+            meta.textContent = `Награда: ${formatNumber(q.reward)} · ${formatNumber(progressVal)} / ${formatNumber(q.target)}`;
+
+            const progressBar = document.createElement("div");
+            progressBar.className = "progress";
+            const fill = document.createElement("div");
+            fill.className = "progress-fill";
+            const ratio = Math.max(0, Math.min(1, progressVal / q.target));
+            fill.style.width = (ratio*100)+"%";
+            progressBar.appendChild(fill);
+
+            main.appendChild(title);
+            main.appendChild(desc);
+            main.appendChild(meta);
+            main.appendChild(progressBar);
+
+            const btn = document.createElement("button");
+            btn.className = "quest-btn";
+
+            const completed = isQuestCompleted(q);
+
+            if(s.claimed){
+                btn.textContent = "Получено";
+                btn.classList.add("disabled");
+            }else if(completed){
+                btn.textContent = "Забрать";
+                btn.addEventListener("click", ()=>{
+                    if(state.quests[q.id].claimed) return;
+                    state.quests[q.id].claimed = true;
+                    state.coins += q.reward;
+                    state.totalEarned += q.reward;
+                    updateUI();
+                    saveState();
+                });
+            }else{
+                btn.textContent = "В процессе";
+                btn.classList.add("disabled");
+            }
+
+            item.appendChild(main);
+            item.appendChild(btn);
+            questList.appendChild(item);
+            state.quests[q.id] = s;
+        }
     }
 
+    // ----- Фермы -----
     function renderFarmPanel(){
         farmList.innerHTML = "";
         for(const def of FARM_DEFS){
@@ -416,86 +552,68 @@
         }
     }
 
-    // --- КВЕСТЫ ---
-    function isQuestCompleted(q){
-        if(q.id==="clicks50"){
-            return state.clickCount>=50;
-        }
-        if(q.id==="coins1000"){
-            return state.coins>=1000;
-        }
-        return false;
+    // ----- UI обновление -----
+    function updateUI(){
+        const autoIncome = getAutoIncome();
+
+        coinsLabel.textContent = formatNumber(state.coins);
+        incomeLabel.textContent = `${state.clickValue} за клик · ${autoIncome} в секунду`;
+        greenInfo.textContent  = `${state.clickValue} за клик · ${autoIncome} в секунду`;
+
+        energyLabel.textContent = `${state.energy} / ${state.maxEnergy}`;
+        const perc = (state.energy/state.maxEnergy)*100;
+        energyFill.style.width = `${perc}%`;
+
+        toggleBtn(clickBtn, state.energy>0);
+
+        energyMeta.textContent = `Уровень ${state.energyLevel} · ${state.maxEnergy} энергии`;
+        clickMeta.textContent  = `Уровень ${state.clickLevel} · ${state.clickValue} за клик`;
+        autoMeta.textContent   = `Уровень ${state.autoLevel} · ${state.autoLevel} базовый авто-клик`;
+        regenMeta.textContent  = `Уровень ${state.regenLevel} · ${state.energyRegenRate.toFixed(1)} ⚡/сек`;
+
+        const costE = getEnergyUpgradeCost();
+        const costC = getClickUpgradeCost();
+        const costA = getAutoUpgradeCost();
+        const costR = getRegenUpgradeCost();
+
+        btnUpgEnergy.textContent = `Купить · ${formatNumber(costE)}`;
+        btnUpgClick.textContent  = `Купить · ${formatNumber(costC)}`;
+        btnUpgAuto.textContent   = `Купить · ${formatNumber(costA)}`;
+        btnUpgRegen.textContent  = `Купить · ${formatNumber(costR)}`;
+
+        toggleBtn(btnUpgEnergy, state.coins>=costE);
+        toggleBtn(btnUpgClick,  state.coins>=costC);
+        toggleBtn(btnUpgAuto,   state.coins>=costA);
+        toggleBtn(btnUpgRegen,  state.coins>=costR);
+
+        renderFarmPanel();
+        renderQuestPanel();
+        renderAchievements();
     }
 
-    function getQuestProgressText(q){
-        if(q.id==="clicks50"){
-            const v = Math.min(state.clickCount,50);
-            return `${v}/50 кликов`;
-        }
-        if(q.id==="coins1000"){
-            const v = Math.min(state.coins,1000);
-            return `${formatNumber(v)}/1 000 монет`;
-        }
-        return "";
+    // ----- Анимация клика -----
+    function spawnFloatText(amount){
+        const el = document.createElement("div");
+        el.className = "float-coin";
+        el.textContent = `+${amount}`;
+
+        const rect = hamsterWrapper.getBoundingClientRect();
+        const x = Math.random()*0.6 + 0.2; // 0.2–0.8
+        const y = Math.random()*0.4 + 0.3; // 0.3–0.7
+        el.style.left = (x*100)+"%";
+        el.style.top  = (y*100)+"%";
+        el.style.transform = "translate(-50%, -50%)";
+
+        hamsterWrapper.appendChild(el);
+        el.addEventListener("animationend", ()=>el.remove());
     }
 
-    function renderQuestPanel(){
-        questList.innerHTML = "";
-        for(const q of QUEST_DEFS){
-            const s = state.quests[q.id] || {claimed:false};
-            const item = document.createElement("div");
-            item.className = "quest-item";
-
-            const main = document.createElement("div");
-            main.className = "quest-main";
-
-            const title = document.createElement("div");
-            title.className = "quest-title";
-            title.textContent = q.title;
-
-            const desc = document.createElement("div");
-            desc.className = "quest-desc";
-            desc.textContent = q.desc;
-
-            const meta = document.createElement("div");
-            meta.className = "quest-meta";
-            const prog = getQuestProgressText(q);
-            meta.textContent = `Награда: ${formatNumber(q.reward)} · ${prog}`;
-
-            main.appendChild(title);
-            main.appendChild(desc);
-            main.appendChild(meta);
-
-            const btn = document.createElement("button");
-            btn.className = "quest-btn";
-
-            const completed = isQuestCompleted(q);
-
-            if(s.claimed){
-                btn.textContent = "Получено";
-                btn.classList.add("disabled");
-            }else if(completed){
-                btn.textContent = "Забрать";
-                btn.addEventListener("click", ()=>{
-                    if(state.quests[q.id].claimed) return;
-                    state.quests[q.id].claimed = true;
-                    state.coins += q.reward;
-                    state.totalEarned += q.reward;
-                    updateUI();
-                    saveState();
-                });
-            }else{
-                btn.textContent = "В процессе";
-                btn.classList.add("disabled");
-            }
-
-            item.appendChild(main);
-            item.appendChild(btn);
-            questList.appendChild(item);
-        }
+    function hitHamster(){
+        hamsterWrapper.classList.add("hit");
+        setTimeout(()=>hamsterWrapper.classList.remove("hit"),100);
     }
 
-    // --- ЛОГИКА КЛИКА И УЛУЧШЕНИЙ ---
+    // ----- Обработчики -----
     clickBtn.addEventListener("click", ()=>{
         const now = Date.now();
         regenEnergy(now);
@@ -510,6 +628,9 @@
         state.coins += state.clickValue;
         state.clickCount += 1;
         state.totalEarned += state.clickValue;
+
+        hitHamster();
+        spawnFloatText(state.clickValue);
 
         updateUI();
         saveState();
@@ -545,7 +666,16 @@
         saveState();
     });
 
-    // переключение вкладок
+    btnUpgRegen.addEventListener("click", ()=>{
+        const cost = getRegenUpgradeCost();
+        if(state.coins<cost)return;
+        state.coins -= cost;
+        state.regenLevel += 1;
+        state.energyRegenRate += 0.25; // +0.25 ⚡/сек за уровень
+        updateUI();
+        saveState();
+    });
+
     tabButtons.forEach(btn=>{
         btn.addEventListener("click",()=>{
             tabButtons.forEach(b=>b.classList.remove("active"));
@@ -568,6 +698,7 @@
     loadState();
     renderFarmPanel();
     renderQuestPanel();
+    renderAchievements();
     updateUI();
     setInterval(gameLoop,300);
 </script>
